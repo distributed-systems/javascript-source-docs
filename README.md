@@ -1,5 +1,7 @@
 # javascript source docs
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/eventEmitter/javascript-source-docs.svg)](https://greenkeeper.io/)
+
 extracts documentation from ecma script files for complete projects
 
 - reads jsdoc comments

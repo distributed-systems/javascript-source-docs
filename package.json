@@ -1,6 +1,6 @@
 {
   "name": "javascript-source-docs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "extract documentation from your javascript source files",
   "main": "src/SourceDocumentation",
   "scripts": {

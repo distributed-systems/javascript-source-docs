@@ -73,6 +73,32 @@ module.exports = class SourceDocumentation {
 
 
     /**
+    * Add custom files that need to be analyzed. If the paths start
+    * with the project root path passed to the constructor the project
+    * root path will be removed from the files path. synchronous version
+    *
+    * @param {...string} files paths for files that need to be parsed
+    *
+    * @throws {InvalidArgumentException} thrown when not all required 
+    *                                    parameters are set
+    */
+    addFilesSync(...files) {
+        for (const fileName of files) {
+            const discovery = new SourceDiscovery();
+            const resolvedFiles = discovery.discoverSync(fileName, false);
+
+            for (let [file, source] of resolvedFiles.entries()) {
+                if (file.startsWith(this.projectRoot)) file = file.substr(this.projectRoot.length);
+                this.files.set(file, source);
+            }
+        }
+    }
+
+
+
+
+
+    /**
     * discover all files for the project
     *
     * @param {string} fileName the path to the main file
@@ -101,12 +127,54 @@ module.exports = class SourceDocumentation {
 
 
     /**
+    * discover all files for the project, synchronous version
+    *
+    * @param {string} fileName the path to the main file
+    *                      from whoch all other files
+    *                      are discovered
+    *
+    * @throws {InvalidArgumentException} thrown when not all 
+    *                                    required parameters 
+    *                                    are set
+    */
+    discoverSourceFilesSync(fileName) {
+        if (!fileName) throw new InvalidArgumentException('missing parameter fileName!');
+        if (!type.string(fileName)) throw new InvalidArgumentException(`the parameter fileName must be a string, got '${type(fileName)}'!`);
+        
+        const discovery = new SourceDiscovery();
+        const files = discovery.discoverSync(path.join(this.projectRoot, fileName));
+        
+        for (let [file, source] of files.entries()) {
+            if (file.startsWith(this.projectRoot)) file = file.substr(this.projectRoot.length);
+            this.files.set(file, source);
+        }
+    }
+
+
+
+
+
+    /**
     * analyze the source files of the project
     *
     * @returns {object} object containing the projects generated
     *                   documentation
     */
     async analyze() {
+        return this.analyzeSync();
+    }
+
+
+
+
+
+    /**
+    * analyze the source files of the project. synchronous version
+    *
+    * @returns {object} object containing the projects generated
+    *                   documentation
+    */
+    analyzeSync() {
         const parser = new Parser();
         const classAnalyzer = new ClassAnalyzer();
         const parsedClasses = [];
